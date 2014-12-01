@@ -9,67 +9,64 @@ import (
 type KeyType generic.Type
 type ValueType generic.Type
 
-// ConMapKeyTypeValueType is a concurrent safe map storing ValueType values,
-// for KeyType keys.
-type ConMapKeyTypeValueType interface {
-	// Get the ValueType for the specified key.
-	Get(key KeyType) ValueType
-	// Get the ValueType for the specified key and a bool indicating
-	// whether a value was found or not.
-	GetOK(key KeyType) (ValueType, bool)
-	// Set the ValueType for the specified key.
-	Set(key KeyType, value ValueType)
-	// Delete the ValueType for the specified key and return it.
-	// Second argument returns true if the value was deleted.
-	Delete(key KeyType) (ValueType, bool)
+// ConMapKeyTypeValueType is a concurrent safe wrapper around a
+// map[KeyType]ValueType.
+type ConMapKeyTypeValueType struct {
+	// M is the underlying map[KeyType]ValueType.
+	M map[KeyType]ValueType
+	// L is the sync.RWMutex used to control access to M.
+	L sync.RWMutex
 }
-
-type conMapKeyTypeValueType struct {
-	m map[KeyType]ValueType
-	l sync.RWMutex
-}
-
-// make sure conMapKeyTypeValueType is a ConMapKeyTypeValueType
-var _ ConMapKeyTypeValueType = (*conMapKeyTypeValueType)(nil)
 
 // NewConMapKeyTypeValueType creates a new concurrent safe map storing ValueType values,
 // for KeyType keys.
-func NewConMapKeyTypeValueType() ConMapKeyTypeValueType {
+func NewConMapKeyTypeValueType() *ConMapKeyTypeValueType {
 	return ToConMapKeyTypeValueType(nil)
 }
 
 // ToConMapKeyTypeValueType creates a new ConMapKeyTypeValueType prepopulated
 // with the data from the specified map[KeyType]ValueType.
-func ToConMapKeyTypeValueType(data map[KeyType]ValueType) ConMapKeyTypeValueType {
+func ToConMapKeyTypeValueType(data map[KeyType]ValueType) *ConMapKeyTypeValueType {
 	if data == nil {
 		data = make(map[KeyType]ValueType)
 	}
-	return &conMapKeyTypeValueType{m: data}
+	return &ConMapKeyTypeValueType{M: data}
 }
 
-func (cm *conMapKeyTypeValueType) Get(k KeyType) ValueType {
-	cm.l.RLock()
-	v := cm.m[k]
-	cm.l.RUnlock()
+var nilValueType ValueType
+
+// Get gets the ValueType value for the given KeyType key.
+func (cm *ConMapKeyTypeValueType) Get(k KeyType) ValueType {
+	cm.L.RLock()
+	v := cm.M[k]
+	cm.L.RUnlock()
 	return v
 }
-func (cm *conMapKeyTypeValueType) GetOK(k KeyType) (ValueType, bool) {
-	cm.l.RLock()
-	v, ok := cm.m[k]
-	cm.l.RUnlock()
+
+// GetOK gets the ValueType value for the given KeyType key, and a
+// bool indicating whether the key was present or not.
+func (cm *ConMapKeyTypeValueType) GetOK(k KeyType) (ValueType, bool) {
+	cm.L.RLock()
+	v, ok := cm.M[k]
+	cm.L.RUnlock()
 	return v, ok
 }
-func (cm *conMapKeyTypeValueType) Set(k KeyType, v ValueType) {
-	cm.l.Lock()
-	cm.m[k] = v
-	cm.l.Unlock()
+
+// Set sets the ValueType value for the specified KeyType key.
+func (cm *ConMapKeyTypeValueType) Set(k KeyType, v ValueType) {
+	cm.L.Lock()
+	cm.M[k] = v
+	cm.L.Unlock()
 }
-func (cm *conMapKeyTypeValueType) Delete(k KeyType) (ValueType, bool) {
-	cm.l.Lock()
-	v, ok := cm.m[k]
+
+// Delete removes the specified KeyType key, returning its ValueType
+// value and a bool indicating whether the delete occurred or not.
+func (cm *ConMapKeyTypeValueType) Delete(k KeyType) (ValueType, bool) {
+	cm.L.Lock()
+	v, ok := cm.M[k]
 	if ok {
-		delete(cm.m, k)
+		delete(cm.M, k)
 	}
-	cm.l.Unlock()
+	cm.L.Unlock()
 	return v, ok
 }
