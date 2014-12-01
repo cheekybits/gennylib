@@ -3,7 +3,7 @@ package maps_test
 import (
 	"testing"
 
-	"github.com/metabition/gennylib/maps"
+	"github.com/cheekybits/gennylib/maps"
 	"github.com/metabition/is"
 )
 
