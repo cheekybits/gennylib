@@ -35,9 +35,16 @@ var _ ConMapKeyTypeValueType = (*conMapKeyTypeValueType)(nil)
 // NewConMapKeyTypeValueType creates a new concurrent safe map storing ValueType values,
 // for KeyType keys.
 func NewConMapKeyTypeValueType() ConMapKeyTypeValueType {
-	return &conMapKeyTypeValueType{
-		m: make(map[KeyType]ValueType),
+	return ToConMapKeyTypeValueType(nil)
+}
+
+// ToConMapKeyTypeValueType creates a new ConMapKeyTypeValueType prepopulated
+// with the data from the specified map[KeyType]ValueType.
+func ToConMapKeyTypeValueType(data map[KeyType]ValueType) ConMapKeyTypeValueType {
+	if data == nil {
+		data = make(map[KeyType]ValueType)
 	}
+	return &conMapKeyTypeValueType{m: data}
 }
 
 func (cm *conMapKeyTypeValueType) Get(k KeyType) ValueType {

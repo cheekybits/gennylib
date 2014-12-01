@@ -7,7 +7,7 @@ import (
 	"github.com/metabition/is"
 )
 
-func TestMap(t *testing.T) {
+func TestNew(t *testing.T) {
 	is := is.New(t)
 
 	k1 := new(maps.KeyType)
@@ -35,5 +35,25 @@ func TestMap(t *testing.T) {
 
 	_, ok = m.GetOK(k2)
 	is.Equal(ok, false)
+
+}
+
+func TestTo(t *testing.T) {
+	is := is.New(t)
+
+	k1 := new(maps.KeyType)
+	k2 := new(maps.KeyType)
+	v1 := new(maps.ValueType)
+	v2 := new(maps.ValueType)
+
+	m := map[maps.KeyType]maps.ValueType{
+		k1: v1,
+		k2: v2,
+	}
+
+	cm := maps.ToConMapKeyTypeValueType(m)
+	is.OK(cm)
+	is.Equal(cm.Get(k1), v1)
+	is.Equal(cm.Get(k2), v2)
 
 }
