@@ -1,7 +1,7 @@
 gennylib
 ========
 
-Library of generic stuff for Genny
+Library of generic stuff for [Genny](https://github.com/metabition/genny).
 
 
 ## Maps
