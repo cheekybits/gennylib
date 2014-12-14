@@ -3,10 +3,13 @@ package maps
 import (
 	"sync"
 
-	"github.com/metabition/genny/generic"
+	"github.com/cheekybits/genny/generic"
 )
 
+// KeyType is the key type for the map.
 type KeyType generic.Type
+
+// ValueType is the value type for the map.
 type ValueType generic.Type
 
 // ConMapKeyTypeValueType is a concurrent safe wrapper around a

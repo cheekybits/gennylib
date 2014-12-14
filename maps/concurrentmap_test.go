@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/cheekybits/gennylib/maps"
-	"github.com/metabition/is"
+	"github.com/cheekybits/is"
 )
 
 func TestNew(t *testing.T) {
