@@ -1,4 +1,4 @@
-package apply
+package mapping
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/cheekybits/is"
 )
 
-func TestApply(T *testing.T) {
+func TestMapAll(T *testing.T) {
 
 	T.Run("happy path", func(t *testing.T) {
 		input := []Domain{}
@@ -30,8 +30,8 @@ func TestApply(T *testing.T) {
 			return r, nil
 		}
 
-		applier := DomainCodomainApplier(testMapper)
-		actual, err := applier.Apply(input)
+		mapping := DomainToCodomainMapping(testMapper)
+		actual, err := mapping.MapAll(input)
 
 		isnt := is.New(t)
 		isnt.NoErr(err)
@@ -48,8 +48,8 @@ func TestApply(T *testing.T) {
 			return nil, errors.New("whatever")
 		}
 
-		applier := DomainCodomainApplier(testMapper)
-		actual, err := applier.Apply(input)
+		mapping := DomainToCodomainMapping(testMapper)
+		actual, err := mapping.MapAll(input)
 
 		isnt := is.New(t)
 		isnt.Err(err)
