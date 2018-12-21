@@ -4,11 +4,9 @@ import (
 	"fmt"
 )
 
-// eventually: go:generate genny -out=gen_mapping_test.go get mapping/mapping.go "Domain=int Codomain=string"
-// but for now:
 //go:generate genny -in=mapping.go -out=gen_mapping_test.go -pkg mapping_test gen "Domain=int Codomain=string"
 
-func ExampleEvennessMapping() {
+func ExampleIntToStringMapping() {
 	evenness := IntToStringMapping(func(i int) (string, error) {
 		if i%2 == 0 {
 			return "even", nil
